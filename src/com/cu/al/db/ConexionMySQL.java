@@ -11,9 +11,9 @@ public class ConexionMySQL {
         //Usuario de base de datos
         String user = "root";
         //Contraseña de base de datos
-        String password = "root";
+        String password = "root"; //CAMBIAR CONTRASEÑA Y NO HACER PUSH
         //URL de BaseDeDatos
-        String url = "jdbc:mysql://127.0.0.1:3306/optiqalumnos?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=utf-8";
+        String url = "jdbc:mysql://127.0.0.1:3306/almacen?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=utf-8";
 
         //Realizamos un TRY para la conexión de BD
         try {
