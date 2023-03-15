@@ -16,15 +16,14 @@ import java.util.List;
  * @author Componentes Unidos
  * @date 14/03/2023
  */
-
 public class ControllerEmpleado {
-    
-     public int isNull;
-    
+
+    public int isNull;
+
     //Es un método static...
     //Comprobaremos si es administrador
     public static boolean isAdmin(Empleado e) {
-        if (e == null || e.getUsuario() == null || e.getUsuario().getUsuario()== null) {
+        if (e == null || e.getUsuario() == null || e.getUsuario().getUsuario() == null) {
             return false;
         } else {
             return e.getUsuario().getRol().trim().toLowerCase().equals("administrador");
@@ -35,15 +34,10 @@ public class ControllerEmpleado {
     //Recibe un objeto de tipo Empleado
     public int insert(Empleado e) throws Exception {
         //Definimos la consulta SQL que invoca al Stored Procedure:
-        String sql = "{call insertarEmpleado(?, ?, ?, ?, ?, ?, ?, "
-                + // Datos Personales
-                "?, ?, ?, ?, ?, ?, ?, ?, "
-                + "?, ?, ?, "
-                + // Datos de Seguridad
-                "?, ?, ?, ?, ?)}";  // Valores de Retorno
+        String sql = "{call insertarEmpleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";  // Valores de Retorno
 
         //Aquí guardaremos los ID's que se generarán:
-        int idPersonaGenerado = -1;
+        String lastTokenGenerado = "";
         int idEmpleadoGenerado = -1;
         int idUsuarioGenerado = -1;
         String numeroUnicoGenerado = "";
@@ -63,33 +57,30 @@ public class ControllerEmpleado {
         cstmt.setString(2, e.getApellidoPaterno());
         cstmt.setString(3, e.getApellidoMaterno());
         cstmt.setString(4, e.getGenero());
-        cstmt.setString(5, e.getRfc());
-        cstmt.setString(6, e.getCorreo());
-        cstmt.setString(7, e.getGenero());
-        cstmt.setInt(8, e.getTelefonoFijo());
-        cstmt.setInt(9, e.getTelefonoMovil());
-       
+        cstmt.setInt(5, e.getTelefonoFijo());
+        cstmt.setInt(6, e.getTelefonoMovil());
+        cstmt.setString(7, e.getCorreo());
+        cstmt.setString(8, e.getRfc());
 
         // Registramos parámetros de datos de seguridad:
-        cstmt.setString(10, e.getUsuario().getUsuario());
-        cstmt.setString(11, e.getUsuario().getContrasenia());
-        cstmt.setString(12, e.getUsuario().getRol());
+        cstmt.setString(9, e.getUsuario().getUsuario());
+        cstmt.setString(10, e.getUsuario().getContrasenia());
+        cstmt.setString(11, e.getUsuario().getRol());
 
         //Registramos los parámetros de salida:
+        cstmt.registerOutParameter(12, Types.INTEGER);
         cstmt.registerOutParameter(13, Types.INTEGER);
         cstmt.registerOutParameter(14, Types.INTEGER);
-        cstmt.registerOutParameter(15, Types.INTEGER);
-        cstmt.registerOutParameter(16, Types.VARCHAR);
-        cstmt.registerOutParameter(17, Types.VARCHAR);
+        cstmt.registerOutParameter(15, Types.VARCHAR);
 
         //Ejecutamos el Stored Procedure:
         cstmt.executeUpdate();
 
         //Recuperamos los ID's generados:
-        idPersonaGenerado = cstmt.getInt(14);
-        idUsuarioGenerado = cstmt.getInt(15);
-        idEmpleadoGenerado = cstmt.getInt(16);
-        numeroUnicoGenerado = cstmt.getString(17);
+        idUsuarioGenerado = cstmt.getInt(12);
+        idEmpleadoGenerado = cstmt.getInt(13);
+        numeroUnicoGenerado = cstmt.getString(14);
+        lastTokenGenerado = cstmt.getString(15);
 
         e.setIdEmpleado(idEmpleadoGenerado);
         e.getUsuario().setIdUsuario(idUsuarioGenerado);
@@ -192,8 +183,6 @@ public class ControllerEmpleado {
     private Empleado fill(ResultSet rs) throws Exception {
         Empleado e = new Empleado();
 
-        
-
         e.setIdEmpleado(rs.getInt("idEmpleado"));
         e.setNumeroUnico(rs.getString("numeroUnico"));
         e.setUsuario(new Usuario());
@@ -212,59 +201,59 @@ public class ControllerEmpleado {
         ConexionMySQL connMySQL = new ConexionMySQL();
         Connection conn = connMySQL.open();
         PreparedStatement ps = conn.prepareCall(sql);
-        
+
         ps.setString(1, usuario);
         ps.setString(2, contrasenia);
-        
+
         ResultSet rs = ps.executeQuery();
- 
+
         List<Empleado> empleados = new ArrayList<>();
 
         while (rs.next()) {
             empleados.add(fill(rs));
         }
-        
+
         rs.close();
         ps.close();
         connMySQL.close();
 
         return empleados;
     }
-    
-   public void guardarToken(List<Empleado> emp) throws Exception{
-       String query = "UPDATE usuario SET LastToken = ? , dateLastToken = now() "
-               + "WHERE idUsuario = ?";
-        
+
+    public void guardarToken(List<Empleado> emp) throws Exception {
+        String query = "UPDATE usuario SET LastToken = ? , dateLastToken = now() "
+                + "WHERE idUsuario = ?";
+
         ConexionMySQL connMySQL = new ConexionMySQL();
         Connection conn = connMySQL.open();
         PreparedStatement ps = conn.prepareCall(query);
         ps.setInt(2, emp.get(0).getUsuario().getIdUsuario());
-        
+
         ps.execute();
-        
+
         ps.close();
         conn.close();
         connMySQL.close();
-       
-   }
-   
-   public void eliminarToken(List<Empleado> emp, String token) throws Exception{
-       String query = "UPDATE usuario SET LastToken = ? WHERE LastToken = ? and idUsuario = ?";
-        
+
+    }
+
+    public void eliminarToken(List<Empleado> emp, String token) throws Exception {
+        String query = "UPDATE usuario SET LastToken = ? WHERE LastToken = ? and idUsuario = ?";
+
         ConexionMySQL connMySQL = new ConexionMySQL();
         Connection conn = connMySQL.open();
         PreparedStatement ps = conn.prepareCall(query);
-        
+
         ps.setString(1, "");
         ps.setString(2, token);
         ps.setInt(3, emp.get(0).getUsuario().getIdUsuario());
-        
+
         ps.execute();
-        
+
         ps.close();
         conn.close();
         connMySQL.close();
-       
-   }
-    
+
+    }
+
 }
