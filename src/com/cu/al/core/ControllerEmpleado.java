@@ -57,8 +57,8 @@ public class ControllerEmpleado {
         cstmt.setString(2, e.getApellidoPaterno());
         cstmt.setString(3, e.getApellidoMaterno());
         cstmt.setString(4, e.getGenero());
-        cstmt.setInt(5, e.getTelefonoFijo());
-        cstmt.setInt(6, e.getTelefonoMovil());
+        cstmt.setString(5, e.getTelefonoFijo());
+        cstmt.setString(6, e.getTelefonoMovil());
         cstmt.setString(7, e.getCorreo());
         cstmt.setString(8, e.getRfc());
 
@@ -118,8 +118,8 @@ public class ControllerEmpleado {
         cstmt.setString(2, e.getApellidoPaterno());
         cstmt.setString(3, e.getApellidoMaterno());
         cstmt.setString(4, e.getGenero());
-        cstmt.setInt(5, e.getTelefonoFijo());
-        cstmt.setInt(6, e.getTelefonoMovil());
+        cstmt.setString(5, e.getTelefonoFijo());
+        cstmt.setString(6, e.getTelefonoMovil());
         cstmt.setString(7, e.getRfc());
         cstmt.setString(8, e.getUsuario().getUsuario());
         cstmt.setString(9, e.getUsuario().getContrasenia());
@@ -184,10 +184,18 @@ public class ControllerEmpleado {
         Empleado e = new Empleado();
 
         e.setIdEmpleado(rs.getInt("idEmpleado"));
+        e.setNombre(rs.getString("nombre"));
         e.setNumeroUnico(rs.getString("numeroUnico"));
+        e.setApellidoMaterno(rs.getString("apellidoMaterno"));
+        e.setApellidoPaterno(rs.getString("apellidoPaterno"));
+        e.setCorreo(rs.getString("correo"));
+        e.setGenero(rs.getString("genero"));
+        e.setTelefonoFijo(rs.getString("telefonoFijo"));
+        e.setTelefonoMovil(rs.getString("telefonoMovil"));
+        e.setRfc(rs.getString("rfc"));
         e.setUsuario(new Usuario());
-        e.getUsuario().setContrasenia(rs.getString("contrasenia"));
         e.getUsuario().setIdUsuario(rs.getInt("idUsuario"));
+        e.getUsuario().setContrasenia(rs.getString("contrasenia"));
         e.getUsuario().setUsuario(rs.getString("nombreUsuario"));
         e.getUsuario().setRol(rs.getString("rol"));
         e.setNumeroUnico(rs.getString("numeroUnico"));
