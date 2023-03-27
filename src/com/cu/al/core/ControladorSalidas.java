@@ -6,6 +6,6 @@ package com.cu.al.core;
  * @date 14/03/2023
  */
 
-public class ControllerReporte {
+public class ControladorSalidas {
     
 }

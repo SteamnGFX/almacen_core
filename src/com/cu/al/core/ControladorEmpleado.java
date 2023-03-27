@@ -16,7 +16,7 @@ import java.util.List;
  * @author Componentes Unidos
  * @date 14/03/2023
  */
-public class ControllerEmpleado {
+public class ControladorEmpleado {
 
     public int isNull;
 
@@ -50,7 +50,9 @@ public class ControllerEmpleado {
 
         //Con este objeto invocaremos al StoredProcedure:
         CallableStatement cstmt = conn.prepareCall(sql);
-
+        
+        System.out.println(e.toString());
+        
         //Establecemos los parámetros de los datos personales en el orden
         //en que los pide el procedimiento almacenado, comenzando en 1:
         cstmt.setString(1, e.getNombre());
@@ -95,13 +97,7 @@ public class ControllerEmpleado {
 
     public void update(Empleado e) throws Exception {
         //Definimos la consulta SQL que invoca al Stored Procedure:
-        String sql = "{call actualizarEmpleado(?, ?, ?, ?, ?, ?, ?, ?, "
-                + // 8 Datos Personales
-                "?, ?, ?, ?, ?, ?, ?, "
-                + // 7
-                "?, ?, ?, "
-                + // 3 Datos de Seguridad
-                "?, ?, ?)}";                 // 3 IDs
+        String sql = "{call actualizarEmpleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";// 13 IDs
 
         //Con este objeto nos vamos a conectar a la Base de Datos:
         ConexionMySQL connMySQL = new ConexionMySQL();
@@ -120,13 +116,14 @@ public class ControllerEmpleado {
         cstmt.setString(4, e.getGenero());
         cstmt.setString(5, e.getTelefonoFijo());
         cstmt.setString(6, e.getTelefonoMovil());
-        cstmt.setString(7, e.getRfc());
-        cstmt.setString(8, e.getUsuario().getUsuario());
-        cstmt.setString(9, e.getUsuario().getContrasenia());
-        cstmt.setString(10, e.getUsuario().getRol());
+        cstmt.setString(7, e.getCorreo());
+        cstmt.setString(8, e.getRfc());
+        cstmt.setString(9, e.getUsuario().getUsuario());
+        cstmt.setString(10, e.getUsuario().getContrasenia());
+        cstmt.setString(11, e.getUsuario().getRol());
 
-        cstmt.setInt(11, e.getUsuario().getIdUsuario());
-        cstmt.setInt(12, e.getIdEmpleado());
+        cstmt.setInt(12, e.getUsuario().getIdUsuario());
+        cstmt.setInt(13, e.getIdEmpleado());
 
         //Ejecutamos el Stored Procedure:
         cstmt.executeUpdate();
@@ -192,6 +189,7 @@ public class ControllerEmpleado {
         e.setGenero(rs.getString("genero"));
         e.setTelefonoFijo(rs.getString("telefonoFijo"));
         e.setTelefonoMovil(rs.getString("telefonoMovil"));
+        e.setEstatus(rs.getString("estatus"));
         e.setRfc(rs.getString("rfc"));
         e.setUsuario(new Usuario());
         e.getUsuario().setIdUsuario(rs.getInt("idUsuario"));
@@ -203,7 +201,7 @@ public class ControllerEmpleado {
         return e;
     }
 
-    public List<Empleado> login(String usuario, String contrasenia) throws Exception {
+    public Empleado login(String usuario, String contrasenia) throws Exception {
         //La consulta SQL a ejecutar:
         String sql = "call loginEmpleado(?, ?)";
         ConexionMySQL connMySQL = new ConexionMySQL();
@@ -215,17 +213,17 @@ public class ControllerEmpleado {
 
         ResultSet rs = ps.executeQuery();
 
-        List<Empleado> empleados = new ArrayList<>();
+        Empleado empleado = null;
 
-        while (rs.next()) {
-            empleados.add(fill(rs));
+        if (rs.next()) {
+            empleado = fill(rs);
         }
 
         rs.close();
         ps.close();
         connMySQL.close();
 
-        return empleados;
+        return empleado;
     }
 
     public void guardarToken(List<Empleado> emp) throws Exception {

@@ -6,6 +6,6 @@ package com.cu.al.core;
  * @date 14/03/2023
  */
 
-public class ControllerEstante {
+public class ControladorAlmacen {
     
 }
