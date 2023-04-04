@@ -11,9 +11,11 @@ public class ConexionMySQL {
         //Usuario de base de datos
         String user = "root";
         //Contraseña de base de datos
-        String password = "12345678"; //CAMBIAR CONTRASEÑA Y NO HACER PUSH
+        String password = "root"; //CAMBIAR CONTRASEÑA Y NO HACER PUSH
         //URL de BaseDeDatos
+        //String url = "jdbc:mysql://127.0.0.1:3306/almacen?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=utf-8";
         String url = "jdbc:mysql://127.0.0.1:3306/almacen?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=utf-8";
+        https://node133976-almacen.jelastic.saveincloud.net/
 
         //Realizamos un TRY para la conexión de BD
         try {
