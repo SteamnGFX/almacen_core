@@ -10,6 +10,18 @@ package com.cu.al.db;
  */
 public class PruebaConexion {
       public static void main(String[] args) {
+          ConexionMySQL connMySQl = new ConexionMySQL();
+        try {
+            connMySQl.open();
+            System.out.println("Conexión establecida con MySQl!");
+                        
+                      
+            connMySQl.close();
+            System.out.println("Conexión Cerrada correctamente con MySQL!");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
       }
     
 }

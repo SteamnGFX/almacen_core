@@ -51,10 +51,11 @@ public class ControladorEmpleado {
         //Con este objeto invocaremos al StoredProcedure:
         CallableStatement cstmt = conn.prepareCall(sql);
         
-        System.out.println(e.toString());
+        System.out.println("OBJETO EMPLEADO: " + e.toString());
         
         //Establecemos los parámetros de los datos personales en el orden
         //en que los pide el procedimiento almacenado, comenzando en 1:
+        
         cstmt.setString(1, e.getNombre());
         cstmt.setString(2, e.getApellidoPaterno());
         cstmt.setString(3, e.getApellidoMaterno());
@@ -68,7 +69,8 @@ public class ControladorEmpleado {
         cstmt.setString(9, e.getUsuario().getUsuario());
         cstmt.setString(10, e.getUsuario().getContrasenia());
         cstmt.setString(11, e.getUsuario().getRol());
-
+        
+        
         //Registramos los parámetros de salida:
         cstmt.registerOutParameter(12, Types.INTEGER);
         cstmt.registerOutParameter(13, Types.INTEGER);
